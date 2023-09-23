@@ -1,3 +1,9 @@
 [submodule "finite-state-machines"]
 	path = finite-state-machines
 	url = https://github.com/WoodyGray/finite-state-machines
+[submodule "Graph-algoritms"]
+	path = Graph-algoritms
+	url = https://github.com/WoodyGray/Graph-algoritms
+[submodule "security-of-operating-systems"]
+	path = security-of-operating-systems
+	url = https://github.com/WoodyGray/security-of-operating-systems
