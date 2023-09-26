@@ -50,16 +50,19 @@ public class Main
     }
 
     private static void showLastRule() throws SQLException {
-        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
 
-        selectStatement.execute("SELECT name FROM knowledge_base.working_memory ORDER BY step_number DESC LIMIT 1;");
+        selectStatement.execute("SELECT name " +
+                "FROM knowledge_base.working_memory ORDER BY step_number DESC LIMIT 1;");
         ResultSet resultSet = selectStatement.getResultSet();
         resultSet.next();
         System.out.println("у вас " + resultSet.getString("name"));
     }
 
     private static void rulesAnalyse() throws SQLException {
-        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
         Statement insertStatement = connection.createStatement();
 
         insertStatement.executeUpdate("update knowledge_base.rules set use_flag = 0");
@@ -87,9 +90,10 @@ public class Main
     }
 
     private static boolean checkCurrentRule(Integer ruleId) throws SQLException {
-        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-        Statement secondSelectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
+        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
+        Statement secondSelectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
 
         ResultSet factsForCurrentRule;
         int factId;
@@ -113,7 +117,8 @@ public class Main
     }
 
     private static void factsAnalyse() throws SQLException {
-        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        Statement selectStatement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_UPDATABLE);
         Statement insertStatement = connection.createStatement();
 
         selectStatement.execute("select * from knowledge_base.facts");
