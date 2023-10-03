@@ -3,7 +3,7 @@ package secondLab;
 import java.io.*;
 
 public class Encoder {
-    public static void encode(String whatCodeFile, String toCodeFile, int[] asci){
+    public static void encodeSimpleSubstitution(String whatCodeFile, String toCodeFile, int[] asci){
         try(FileInputStream whatCode = new FileInputStream(whatCodeFile);
             FileOutputStream toCode = new FileOutputStream(toCodeFile)){
             int bufferSize = 64000;
@@ -23,6 +23,27 @@ public class Encoder {
                 toCode.write(bufferWrite);
                 toCode.flush();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void encodePermutation(String whatCodeFile, String toCodeFile, int[] key){
+        try(FileInputStream whatCode = new FileInputStream(whatCodeFile);
+            FileOutputStream toCode = new FileOutputStream(toCodeFile)){
+            int bufferSize = 64000;
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+            while (bufferSize % key.length != 0){
+                bufferSize++;
+            }
+            while (whatCode.available() > 0){
+                if (whatCode.available() < bufferSize) bufferSize = whatCode.available();
+                whatCode.read(bufferRead, 0, bufferSize);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

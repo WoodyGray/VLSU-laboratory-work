@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Decoder {
-    public static void decode(String whatDecodeFileName, String toCodeFileName, int[] asci){
+    public static void decodeSimpleSabstitution(String whatDecodeFileName, String toCodeFileName, int[] asci){
         try(FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
             FileOutputStream toCodeFile = new FileOutputStream(toCodeFileName)){
             int[] asciDecode = new int[256];

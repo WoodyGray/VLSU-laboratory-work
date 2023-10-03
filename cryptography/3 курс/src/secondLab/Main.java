@@ -1,7 +1,6 @@
 package secondLab;
 
 
-import java.util.HashMap;
 import java.util.Random;
 
 public class Main {
@@ -9,9 +8,9 @@ public class Main {
     public static void main(String[] args) {
         asciCode = mixAsci();
 
-        Encoder.encode("first.exe", "secondFile.exe", asciCode);
+        Encoder.encodeSimpleSubstitution("first.exe", "secondFile.exe", asciCode);
         System.out.println();
-        Decoder.decode("secondFile.exe", "secodFile.exe", asciCode);
+        Decoder.decodeSimpleSabstitution("secondFile.exe", "secodFile.exe", asciCode);
         System.out.println();
 
     }
