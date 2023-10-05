@@ -28,18 +28,34 @@ public class Encoder {
         }
 
     }
-    public static void encodePermutation(String whatCodeFile, String toCodeFile, int[] key){
+    public static int encodePermutation(String whatCodeFile, String toCodeFile, int[] key){
+        int whatCodeFileSize = 0;
         try(FileInputStream whatCode = new FileInputStream(whatCodeFile);
             FileOutputStream toCode = new FileOutputStream(toCodeFile)){
             int bufferSize = 64000;
-            byte[] bufferRead = new byte[bufferSize];
-            byte[] bufferWrite = new byte[bufferSize];
             while (bufferSize % key.length != 0){
                 bufferSize++;
             }
+            whatCodeFileSize = whatCode.available();
+
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+
             while (whatCode.available() > 0){
-                if (whatCode.available() < bufferSize) bufferSize = whatCode.available();
+                if (whatCode.available() < bufferSize) {
+                    bufferSize = whatCode.available();
+                    bufferSize = bufferSize + key.length - (bufferSize % key.length);
+                    bufferWrite = new byte[bufferSize];
+                }
                 whatCode.read(bufferRead, 0, bufferSize);
+
+                for (int i = 0; i < bufferSize / key.length; i++) {
+                    for (int j = 0; j < key.length; j++) {
+                        bufferWrite[i*key.length + key[j]] = bufferRead[i*key.length + j];
+                    }
+                }
+                toCode.write(bufferWrite);
+                toCode.flush();
             }
 
         } catch (FileNotFoundException e) {
@@ -47,6 +63,7 @@ public class Encoder {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return whatCodeFileSize;
 
     }
 }

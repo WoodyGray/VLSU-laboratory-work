@@ -5,17 +5,19 @@ import java.util.Random;
 
 public class Main {
     private static int[] asciCode;
+    private static int fileSize;
     public static void main(String[] args) {
-        asciCode = mixAsci();
+        asciCode = mixArray(8);
 
-        Encoder.encodeSimpleSubstitution("first.exe", "secondFile.exe", asciCode);
+        fileSize = Encoder.encodePermutation("first.exe", "secondFile.exe", asciCode);
         System.out.println();
-        Decoder.decodeSimpleSabstitution("secondFile.exe", "secodFile.exe", asciCode);
+        Decoder.decodePermutation("secondFile.exe", "secodFile.exe", asciCode, fileSize);
         System.out.println();
 
     }
-    private static int[] mixAsci(){
-        int[] arr = new int[256];
+
+    private static int[] mixArray(int length){
+        int[] arr = new int[length];
         for (int i = 0; i < arr.length; i++) {
             arr[i] = i;
         }
