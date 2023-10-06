@@ -8,21 +8,29 @@ public class Main {
     private static int[] asciCode;
     private static int fileSize;
     public static void main(String[] args) {
+//********************Простая подстановка***************************
+//        asciCode = mixArray(256);
+//        Encoder.encodeSimpleSubstitution("firstFile.txt",
+//                "secondFile.txt", asciCode);
+//        Decoder.decodeSimpleSabstitution("secondFile.txt",
+//                "thirdFile.txt", asciCode);
+
+//***********************Перестановка**********************************
 //        asciCode = mixArray(8);
 //
 //        fileSize = Encoder.encodePermutation("first.exe", "secondFile.exe", asciCode);
-//        System.out.println();
 //        Decoder.decodePermutation("secondFile.exe", "secodFile.exe", asciCode, fileSize);
-//        System.out.println();
 
+//************************Гамирование***********************************
 //        asciCode = rndArrayOfByte(5);
 //        Encoder.encodeGamming("firstFile.exe", "secondFile.exe", asciCode);
 //        Decoder.decodeGamming("secondFile.exe", "secodFile.exe", asciCode);
 
-        Encoder.encodeGamming("firstFile.exe",
-                "secondFile.exe", "notepad.txt");
-        Decoder.decodeGamming("secondFile.exe",
-                "secodFile.exe", "notepad.txt");
+//*********************Одноразовый блокнот***************************
+//        Encoder.encodeGamming("firstFile.exe",
+//                "secondFile.exe", "notepad.txt");
+//        Decoder.decodeGamming("secondFile.exe",
+//                "secodFile.exe", "notepad.txt");
 
     }
 
