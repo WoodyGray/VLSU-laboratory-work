@@ -36,7 +36,8 @@ public class Decoder {
         }
     }
 
-    public static void decodePermutation(String whatDecodeFile, String toDecodeFile, int[] key, int origFileSize){
+    public static void decodePermutation(String whatDecodeFile, String toDecodeFile,
+                                         int[] key, int origFileSize){
         int whatCodeFileSize = 0;
         try(FileInputStream whatDecode = new FileInputStream(whatDecodeFile);
             FileOutputStream toDecode = new FileOutputStream(toDecodeFile)){
@@ -82,5 +83,68 @@ public class Decoder {
             e.printStackTrace();
         }
 
+    }
+
+    public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName, int[] key){
+        try (FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
+             FileOutputStream toDecodeFile = new FileOutputStream(toDecodeFileName)){
+
+            int bufferSize = 64000;
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+
+            while (whatDecodeFile.available() > 0){
+                if (whatDecodeFile.available() < bufferSize) {
+                    bufferSize = whatDecodeFile.available();
+                    bufferWrite = new byte[bufferSize];
+                }
+
+                whatDecodeFile.read(bufferRead, 0, bufferSize);
+
+                for (int i = 0; i < bufferSize; i++) {
+                    bufferWrite[i] = (byte) (bufferRead[i] - key[i % key.length]);
+                }
+
+                toDecodeFile.write(bufferWrite);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName, String notepadFileName){
+        try (FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
+             FileOutputStream toDecodeFile = new FileOutputStream(toDecodeFileName);
+             FileInputStream notepadFile = new FileInputStream(notepadFileName)){
+
+            int bufferSize = 64000;
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+            byte[] bufferNotepad = new byte[bufferSize];
+
+            while (whatDecodeFile.available() > 0){
+                if (whatDecodeFile.available() < bufferSize) {
+                    bufferSize = whatDecodeFile.available();
+                    bufferWrite = new byte[bufferSize];
+                }
+
+                whatDecodeFile.read(bufferRead, 0, bufferSize);
+                notepadFile.read(bufferNotepad, 0, bufferSize);
+
+                for (int i = 0; i < bufferSize; i++) {
+                    bufferWrite[i] = (byte) (bufferRead[i] - bufferNotepad[i]);
+                }
+
+                toDecodeFile.write(bufferWrite);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,7 @@
 package secondLab;
 
 import java.io.*;
+import java.util.Random;
 
 public class Encoder {
     public static void encodeSimpleSubstitution(String whatCodeFile, String toCodeFile, int[] asci){
@@ -66,4 +67,74 @@ public class Encoder {
         return whatCodeFileSize;
 
     }
+    public static void encodeGamming(String whatCodeFileName, String toCodeFileName, int[] key){
+        try (FileInputStream whatCodeFile = new FileInputStream(whatCodeFileName);
+            FileOutputStream toCodeFile = new FileOutputStream(toCodeFileName)){
+
+            int bufferSize = 64000;
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+
+            while (whatCodeFile.available() > 0){
+                if (whatCodeFile.available() < bufferSize) {
+                    bufferSize = whatCodeFile.available();
+                    bufferWrite = new byte[bufferSize];
+                }
+
+                whatCodeFile.read(bufferRead, 0, bufferSize);
+
+                for (int i = 0; i < bufferSize; i++) {
+                    bufferWrite[i] = (byte) (bufferRead[i] + key[i % key.length]);
+                }
+
+                toCodeFile.write(bufferWrite);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void encodeGamming(String whatCodeFileName, String toCodeFileName,
+                                     String notepadFileName){
+        try (FileInputStream whatCodeFile = new FileInputStream(whatCodeFileName);
+             FileOutputStream toCodeFile = new FileOutputStream(toCodeFileName);
+             FileOutputStream notepadFile = new FileOutputStream(notepadFileName)){
+
+            int bufferSize = 64000;
+            byte[] bufferRead = new byte[bufferSize];
+            byte[] bufferNotepad = new byte[bufferSize];
+            byte[] bufferWrite = new byte[bufferSize];
+
+            Random rnd = new Random();
+
+            while (whatCodeFile.available() > 0){
+                if (whatCodeFile.available() < bufferSize) {
+                    bufferSize = whatCodeFile.available();
+                    bufferWrite = new byte[bufferSize];
+                }
+
+                whatCodeFile.read(bufferRead, 0, bufferSize);
+
+
+                for (int i = 0; i < bufferSize; i++) {
+                    bufferNotepad[i] = (byte) rnd.nextInt(256);
+                    bufferWrite[i] = (byte) (bufferRead[i] + bufferNotepad[i]);
+                }
+
+                notepadFile.write(bufferNotepad);
+                notepadFile.flush();
+                toCodeFile.write(bufferWrite);
+                toCodeFile.flush();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
