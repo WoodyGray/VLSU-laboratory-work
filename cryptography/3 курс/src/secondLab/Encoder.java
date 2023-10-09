@@ -34,9 +34,7 @@ public class Encoder {
         try(FileInputStream whatCode = new FileInputStream(whatCodeFile);
             FileOutputStream toCode = new FileOutputStream(toCodeFile)){
             int bufferSize = 64000;
-            while (bufferSize % key.length != 0){
-                bufferSize++;
-            }
+            if (bufferSize % key.length != 0) bufferSize += bufferSize % key.length;
             whatCodeFileSize = whatCode.available();
 
             byte[] bufferRead = new byte[bufferSize];
@@ -117,7 +115,6 @@ public class Encoder {
                 }
 
                 whatCodeFile.read(bufferRead, 0, bufferSize);
-
 
                 for (int i = 0; i < bufferSize; i++) {
                     bufferNotepad[i] = (byte) rnd.nextInt(256);

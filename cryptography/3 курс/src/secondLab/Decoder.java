@@ -6,8 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Decoder {
-    public static void decodeSimpleSabstitution(String whatDecodeFileName,
-                                                String toCodeFileName, int[] asci){
+    public static void decodeSimpleSabstitution(String whatDecodeFileName, String toCodeFileName, int[] asci){
         try(FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
             FileOutputStream toCodeFile = new FileOutputStream(toCodeFileName)){
             int[] asciDecode = new int[256];
@@ -115,7 +114,8 @@ public class Decoder {
         }
     }
 
-    public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName, String notepadFileName){
+    public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName,
+                                     String notepadFileName){
         try (FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
              FileOutputStream toDecodeFile = new FileOutputStream(toDecodeFileName);
              FileInputStream notepadFile = new FileInputStream(notepadFileName)){
