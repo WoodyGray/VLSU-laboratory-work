@@ -3,32 +3,61 @@ package org;
 public class task1 {
 
     public static void main(String[] args) {
-        // Вариант 19
-        // Заданные исходные данные
-        int m = 4; // количество типов СрЗИ
-        int n = 20; // количество значений переменной Y
-        int minY = 19; // минимальное значение переменной Y
-        int maxY = minY + n - 1; // максимальное значение переменной Y
+        int Y = 80;
+        int[] c = {25, 80, 65};
+        int[] w = {10, 30, 20};
+        int m = c.length;
 
-        int[] w = {4, 5, 8, 9}; // стоимость СрЗИ каждого типа
-        int[] c = {55, 75, 65, 69}; // эффект применения СрЗИ каждого типа
+        int[][] table = new int[m + 1][Y + 1];
 
-        // Создаем массив для хранения решения
-        int[][] dp = new int[m + 1][maxY + 1];
-
-        // Заполняем массив с использованием метода динамического программирования
         for (int i = 1; i <= m; i++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int k = 0; k <= y / w[i - 1]; k++) {
-                    dp[i][y] = Math.max(dp[i][y], dp[i - 1][y - k * w[i - 1]] + k * c[i - 1]);
+            for (int y = 0; y <= Y; y++) {
+                int maxValWithoutI = table[i - 1][y];
+                int maxValWithI = 0;
+
+                for (int x = 1; x <= y / w[i - 1]; x++) {
+                    int valWithI = c[i - 1] * x + table[i - 1][y - w[i - 1] * x];
+                    maxValWithI = Math.max(maxValWithI, valWithI);
                 }
+
+                table[i][y] = Math.max(maxValWithoutI, maxValWithI);
             }
         }
 
-        // Выводим наилучшее значение ЦФ для каждого значения Y
-        for (int y = minY; y <= maxY; y++) {
-            System.out.println("Максимальный эффект для Y = " + y + ": " + dp[m][y]);
+        // Вывод таблицы
+        System.out.print("y\t");
+        for (int i = 0; i <= Y; i+=10) {
+            System.out.print(i + "\t");
         }
+        System.out.println();
+
+        for (int i = 0; i <= m; i++) {
+            System.out.print("f" + i + "\t");
+            for (int y = 0; y <= Y; y+=10) {
+                System.out.print(table[i][y] + "\t");
+            }
+            System.out.println();
+        }
+    }
+
+    public static int[] findOptimalStrategies(int[][][] table, int stage, int Y, int[] w) {
+        int[] optimalStrategies = new int[stage];
+        int x = Y / w[stage - 1];
+        optimalStrategies[stage - 1] = x;
+
+        for (int i = stage - 1; i >= 1; i--) {
+            int maxValWithI = table[i][Y][x];
+            int maxValWithoutI = table[i - 1][Y][x];
+            if (maxValWithI > maxValWithoutI) {
+                optimalStrategies[i - 1] = x;
+            } else {
+                x--;
+                optimalStrategies[i - 1] = x;
+            }
+            Y -= x * w[i - 1];
+        }
+
+        return optimalStrategies;
     }
 }
 
