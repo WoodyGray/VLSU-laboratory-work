@@ -17,6 +17,7 @@ public class DfaMinimization {
         initAdmittingVertexes("admittingVertexes.txt");
 
         startMinimization();
+        System.out.println(1);
     }
 
     private static void initMatrixAutomate(String matrixFileName){
@@ -67,58 +68,41 @@ public class DfaMinimization {
                     initCertaintyMatrix();
             boolean flag = true;
             while (flag){
+                String[] variants;
                 for (String v: certaintyMatrix.keySet()
                      ) {
-                    for (String vv: certaintyMatrix.keySet()
+                    for (String vv: certaintyMatrix.get(v).keySet()
                          ) {
-                        if (!vv.equals(v)
-                                && certaintyMatrix.get(v).get(vv) != 1){
-                            String[] variants = new String[]{
-                                    matrixAutomate.get(v).get("0"),
-                                    matrixAutomate.get(vv).get("0")
-                            };
-
-                            if (certaintyMatrix.get(variants[0]).get(variants[1]) == 1){
-                                certaintyMatrix.get(vv).put(v, 1);
-                                certaintyMatrix.get(v).put(vv, 1);
-                                flag = false;
-                            }else {
-                                if (!((admittingVertexes.contains(variants[0])
-                                        && admittingVertexes.contains(variants[1]))
-                                        || (!admittingVertexes.contains(variants[0])
-                                        && !admittingVertexes.contains(variants[1])))) {
-                                    certaintyMatrix.get(vv).put(v, 1);
+                        if (certaintyMatrix.get(v).get(vv) == 0) {
+                            for (String way : matrixAutomate.get(v).keySet()
+                            ) {
+                                variants = new String[]{
+                                        matrixAutomate.get(v).get(way),
+                                        matrixAutomate.get(vv).get(way)
+                                };
+                                if ((!variants[0].equals(variants[1]))
+                                        && (certaintyMatrix.get(variants[0]).get(variants[1]) == 1
+                                        || (admittingVertexes.contains(variants[0])
+                                        && !admittingVertexes.contains(variants[1]))
+                                        || (admittingVertexes.contains(variants[1])
+                                        && !admittingVertexes.contains(variants[0])))) {
                                     certaintyMatrix.get(v).put(vv, 1);
-                                    flag = false;
-                                }
-                            }
-                            variants = new String[]{
-                                    matrixAutomate.get(v).get("1"),
-                                    matrixAutomate.get(vv).get("1")
-                            };
-                            if (certaintyMatrix.get(variants[0]).get(variants[1]) == 1){
-                                certaintyMatrix.get(vv).put(v, 1);
-                                certaintyMatrix.get(v).put(vv, 1);
-                                flag = false;
-
-                            }else {
-                                if (!((admittingVertexes.contains(variants[0])
-                                        && admittingVertexes.contains(variants[1]))
-                                        || (!admittingVertexes.contains(variants[0])
-                                        && !admittingVertexes.contains(variants[1])))) {
                                     certaintyMatrix.get(vv).put(v, 1);
-                                    certaintyMatrix.get(v).put(vv, 1);
                                     flag = false;
                                 }
                             }
                         }
                     }
                 }
+                System.out.println(1);
                 if (!flag){
                     flag = true;
+                }else {
+                    flag = false;
                 }
             }
-            System.out.println(1);
+
+            createOptimizedAutomate(certaintyMatrix);
         }
     }
 
@@ -130,9 +114,58 @@ public class DfaMinimization {
             certaintyMatrix.put(v, new HashMap<>());
             for (String vv: matrixAutomate.keySet()
                  ) {
-                certaintyMatrix.get(v).put(vv, 0);
+                if (!vv.equals(v)) certaintyMatrix.get(v).put(vv, 0);
             }
         }
         return certaintyMatrix;
     }
+
+    private static void createOptimizedAutomate(
+            Map<String, Map<String, Integer>> certaintyMatrix){
+        String[] columns = matrixAutomate.get(startVertex).keySet().toArray(new String[0]);
+
+        optimizedAutomate = new HashMap<>();
+        Set<String> usageVertexes = new HashSet<>();
+        String[] variants;
+        for (String v: certaintyMatrix.keySet()
+             ) {
+            for (String vv: certaintyMatrix.get(v).keySet()
+                 ) {
+                if (certaintyMatrix.get(v).get(vv) == 0){
+                    if (!optimizedAutomate.containsKey(v + vv)
+                            && !optimizedAutomate.containsKey(vv + v)){
+                        optimizedAutomate.put(v+vv, new HashMap<>());
+                        usageVertexes.add(v);
+                        usageVertexes.add(vv);
+                        for (String way: columns
+                             ) {
+                            variants = new String[]{
+                                    matrixAutomate.get(v).get(way),
+                                    matrixAutomate.get(vv).get(way)
+                            };
+                            if (variants[0].equals(variants[1])){
+                                optimizedAutomate.get(v+vv).put(way, variants[0]);
+                            }else {
+                                optimizedAutomate.get(v+vv).put(way, variants[0] + variants[1]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (String v: matrixAutomate.keySet()
+             ) {
+            if (!usageVertexes.contains(v)){
+                optimizedAutomate.put(v, new HashMap<>());
+                for (String way: columns
+                     ) {
+                    optimizedAutomate.get(v).put(way, matrixAutomate.get(v).get(way));
+                }
+            }
+        }
+        System.out.println(1);
+
+    }
+
+
 }
