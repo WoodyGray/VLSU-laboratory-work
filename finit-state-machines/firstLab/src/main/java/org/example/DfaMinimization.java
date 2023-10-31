@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+//3 lab
+
 public class DfaMinimization {
     private static Map<String,Map<String, String>> matrixAutomate;
     private static ArrayList<String> admittingVertexes;

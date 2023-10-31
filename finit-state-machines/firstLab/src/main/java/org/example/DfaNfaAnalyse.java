@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 
+//1-2 lab
+
 public class DfaNfaAnalyse {
     private static HashMap<String, HashMap<String, String>> matrix;
     private static HashMap<String, HashMap<String, String[]>> dMatrix;

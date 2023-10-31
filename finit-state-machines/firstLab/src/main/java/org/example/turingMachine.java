@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+//9 lab
+
 public class turingMachine {
     private static Map<String, Map<String, String[]>> turingMatrix;
     private static String startPoint;
