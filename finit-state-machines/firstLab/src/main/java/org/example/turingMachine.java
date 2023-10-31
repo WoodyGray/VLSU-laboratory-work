@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 //9 lab
 
@@ -49,7 +50,7 @@ public class turingMachine {
             if (reader.ready()){
                 line = new ArrayList<>();
                 line.add(startPoint);
-                line.addAll(Arrays.stream(reader.readLine().split("")).toList());
+                line.addAll(Arrays.stream(reader.readLine().split("")).collect(Collectors.toList()));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

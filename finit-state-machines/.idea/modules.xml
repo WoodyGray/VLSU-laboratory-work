@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/finit-state-machines.iml" filepath="$PROJECT_DIR$/.idea/finit-state-machines.iml" />
+      <module fileurl="file://$PROJECT_DIR$/firstLab/firstLab.iml" filepath="$PROJECT_DIR$/firstLab/firstLab.iml" />
     </modules>
   </component>
 </project>
