@@ -48,37 +48,76 @@ public class AutomateCreatorFromRegulars {
             while (i < regularExpression.length){
                 if (!operations.contains(regularExpression[i])){
                     i = noOperationRegularSymbol(i);
-                }else if(regularExpression[i].equals('(')){
-                    int start = i+1;
-                    while (!regularExpression[i].equals(')')
-                            && (i != regularExpression.length
-                            && !regularExpression[i].equals(')')))
-                        i += 1;
+                }else if(regularExpression[i].equals("(")){
 
-                    bracketRegularSymbol(start, i-1, startVertex, endVertex);
+                    i = bracketRegularSymbol(i,
+                            regularExpression.length,
+                            startVertex, endVertex);
+                }else {
+                    i++;
                 }
             }
         }
     }
 
-    private static void bracketRegularSymbol(int start, int end, String startVertex, String endVertex){
-        String intermediateStartVertex = startVertex;
-        for (int i = start; i <= end; i++) {
+    private static int bracketRegularSymbol(int start, int end,
+                                             String intermediateStartVertex,
+                                             String intermediateEndVertex){
+        start += 1;
+        int i = start;
+        int cntOfOpenBracket = 0;
+        while (end != start) {
+            if (regularExpression[i].equals("(")) {
+                cntOfOpenBracket++;
+            } else if (regularExpression[i].equals(")")) {
+                if (cntOfOpenBracket == 0) {
+                    break;
+                }else {
+                    cntOfOpenBracket--;
+                }
+            }
+            i += 1;
+        }
+        end = i-1;
+
+        i = start;
+
+        while (i <= end){
             if (!operations.contains(regularExpression[i])){
                 i = noOperationRegularSymbol(i);
-            }else if(regularExpression[i].equals('(')){
-                int newStart = i+1;
-                while (!regularExpression[i].equals(')')
-                        && (i != end
-                        && !regularExpression[i].equals(')')))
-                    i += 1;
-
-                bracketRegularSymbol(start, i-1, startVertex, endVertex);
-            }else if(regularExpression[i].equals('+')){
-                
+                intermediateEndVertex = endVertex;
+            }else if(regularExpression[i].equals("(")){
+                i = bracketRegularSymbol(i, end, startVertex, endVertex);
+            }else if(regularExpression[i].equals("+")){
+                i = plusRegularSymbol(i, end,
+                        intermediateStartVertex,
+                        intermediateEndVertex);
             }
         }
 
+        return end+1;
+
+    }
+
+    private static int plusRegularSymbol(int start, int end,
+                                          String intermediateStartVertex,
+                                          String intermediateEndVertex){
+        int i = start + 1;
+        startVertex = intermediateStartVertex;
+        while (i <= end){
+            if (!operations.contains(regularExpression[i])) {
+                if (i != end) {
+                    i = noOperationRegularSymbol(i);
+                }else {
+                    i = noOperationRegularSymbol(i,
+                            startVertex,
+                            intermediateEndVertex);
+                }
+            }else if(regularExpression[i].equals("(")){
+                i = bracketRegularSymbol(i, end, intermediateStartVertex, endVertex);
+            }
+        }
+        return i;
     }
 
     private static int noOperationRegularSymbol(int i){
@@ -93,6 +132,24 @@ public class AutomateCreatorFromRegulars {
                             ";" + endVertex);
         }
         startVertex = endVertex;
+        i += 1;
+        return i;
+    }
+
+    private static int noOperationRegularSymbol(int i,
+                                                String intermediateStartVertex,
+                                                String intermediateEndVertex){
+
+        if (!nfaMatrix.containsKey(intermediateEndVertex))
+            nfaMatrix.put(intermediateEndVertex, new HashMap<>());
+        if (nfaMatrix.get(intermediateStartVertex).get(regularExpression[i]) == null) {
+            nfaMatrix.get(intermediateStartVertex).put(regularExpression[i],intermediateEndVertex);
+        }else {
+            nfaMatrix.get(intermediateStartVertex).put(regularExpression[i],
+                    nfaMatrix.get(intermediateStartVertex).get(regularExpression[i]) +
+                            ";" + intermediateEndVertex);
+        }
+        startVertex = intermediateEndVertex;
         i += 1;
         return i;
     }
