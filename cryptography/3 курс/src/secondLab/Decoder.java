@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Decoder {
-    public static void decodeSimpleSabstitution(String whatDecodeFileName, String toCodeFileName, int[] asci){
+    public static void decodeSimpleSubstitution(String whatDecodeFileName, String toCodeFileName, int[] asci){
         try(FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
             FileOutputStream toCodeFile = new FileOutputStream(toCodeFileName)){
             int[] asciDecode = new int[256];
@@ -33,6 +33,22 @@ public class Decoder {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static byte[] decodeSimpleSubstitution(byte[] block, int[] asci){
+        int[] asciDecode = new int[256];
+        for (int i = 0; i < 256; i++) {
+            asciDecode[asci[i]] = i;
+        }
+        int bufferSize = block.length;
+        byte[] bufferRead = block;
+        byte[] bufferWrite = new byte[bufferSize];
+
+        for (int i = 0; i < bufferSize; i++) {
+            bufferWrite[i] = (byte)asciDecode[bufferRead[i] & 0b11111111];
+        }
+
+        return bufferWrite;
     }
 
     public static void decodePermutation(String whatDecodeFile, String toDecodeFile,
@@ -83,6 +99,25 @@ public class Decoder {
         }
 
     }
+    public static byte[] decodePermutation(byte[] block, int[] key){
+        int bufferSize = block.length;
+        int[] keyDecode = new int[key.length];
+
+        for (int i = 0; i < key.length; i++) {
+            keyDecode[key[i]] = i;
+        }
+
+        byte[] bufferRead = block;
+        byte[] bufferWrite = new byte[bufferSize];
+
+        for (int i = 0; i < bufferSize / key.length; i++) {
+            for (int j = 0; j < key.length; j++) {
+                bufferWrite[i*key.length + keyDecode[j]] = bufferRead[i*key.length + j];
+            }
+        }
+
+        return bufferWrite;
+    }
 
     public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName, int[] key){
         try (FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
@@ -112,6 +147,20 @@ public class Decoder {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static byte[] decodeGamming(byte[] block, int[] key){
+
+        int bufferSize = block.length;
+        byte[] bufferRead = block;
+        byte[] bufferWrite = new byte[bufferSize];
+
+        for (int i = 0; i < bufferSize; i++) {
+            bufferWrite[i] = (byte) (bufferRead[i] - key[i % key.length]);
+        }
+
+        return bufferWrite;
+
     }
 
     public static void decodeGamming(String whatDecodeFileName, String toDecodeFileName,
