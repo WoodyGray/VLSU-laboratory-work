@@ -66,7 +66,7 @@ public class AutomateCreatorFromRegulars {
         start += 1;
         int i = start;
         int cntOfOpenBracket = 0;
-        while (end != start) {
+        while (i != end) {
             if (regularExpression[i].equals("(")) {
                 cntOfOpenBracket++;
             } else if (regularExpression[i].equals(")")) {
@@ -87,11 +87,13 @@ public class AutomateCreatorFromRegulars {
                 i = noOperationRegularSymbol(i);
                 intermediateEndVertex = endVertex;
             }else if(regularExpression[i].equals("(")){
-                i = bracketRegularSymbol(i, end, startVertex, endVertex);
+                i = bracketRegularSymbol(i, end, startVertex, intermediateEndVertex);
             }else if(regularExpression[i].equals("+")){
                 i = plusRegularSymbol(i, end,
                         intermediateStartVertex,
                         intermediateEndVertex);
+            }else{
+                i++;
             }
         }
 
@@ -115,6 +117,8 @@ public class AutomateCreatorFromRegulars {
                 }
             }else if(regularExpression[i].equals("(")){
                 i = bracketRegularSymbol(i, end, intermediateStartVertex, endVertex);
+            }else {
+                i++;
             }
         }
         return i;
