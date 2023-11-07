@@ -49,7 +49,8 @@ public class AutomateCreatorFromRegulars {
                 if (!operations.contains(regularExpression[i])){
                     i = noOperationRegularSymbol(i);
                 }else if(regularExpression[i].equals("(")){
-
+                    newVertex++;
+                    endVertex = String.valueOf(newVertex);
                     i = bracketRegularSymbol(i,
                             regularExpression.length,
                             startVertex, endVertex);
@@ -84,13 +85,18 @@ public class AutomateCreatorFromRegulars {
 
         while (i <= end){
             if (!operations.contains(regularExpression[i])){
-                i = noOperationRegularSymbol(i);
-                intermediateEndVertex = endVertex;
+                if (!operations.contains(regularExpression[i+1])) {
+                    i = noOperationRegularSymbol(i);
+                }else{
+                    i = noOperationRegularSymbol(i,
+                            startVertex,
+                            intermediateEndVertex);
+                }
             }else if(regularExpression[i].equals("(")){
                 i = bracketRegularSymbol(i, end, startVertex, intermediateEndVertex);
+//                intermediateEndVertex = endVertex;
             }else if(regularExpression[i].equals("+")){
-                i = plusRegularSymbol(i, end,
-                        intermediateStartVertex,
+                i = plusRegularSymbol(i, end,intermediateStartVertex,
                         intermediateEndVertex);
             }else{
                 i++;
@@ -116,7 +122,7 @@ public class AutomateCreatorFromRegulars {
                             intermediateEndVertex);
                 }
             }else if(regularExpression[i].equals("(")){
-                i = bracketRegularSymbol(i, end, intermediateStartVertex, endVertex);
+                i = bracketRegularSymbol(i, end, intermediateStartVertex, intermediateEndVertex);
             }else {
                 i++;
             }
