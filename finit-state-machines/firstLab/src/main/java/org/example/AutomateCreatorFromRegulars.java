@@ -47,7 +47,12 @@ public class AutomateCreatorFromRegulars {
             int i = 0;
             while (i < regularExpression.length){
                 if (!operations.contains(regularExpression[i])){
-                    i = noOperationRegularSymbol(i);
+                    if (i < regularExpression.length-1
+                            && regularExpression[i+1].equals("*")){
+                        i = noOperationRegularSymbol(i, startVertex, startVertex);
+                    }else{
+                        i = noOperationRegularSymbol(i);
+                    }
                 }else if(regularExpression[i].equals("(")){
                     newVertex++;
                     endVertex = String.valueOf(newVertex);
@@ -79,6 +84,10 @@ public class AutomateCreatorFromRegulars {
             }
             i += 1;
         }
+        boolean isStarSymbol = false;
+        if (i < regularExpression.length-1
+                && regularExpression[i+1].equals("*"))
+            isStarSymbol = true;
         end = i-1;
 
         i = start;
@@ -88,16 +97,35 @@ public class AutomateCreatorFromRegulars {
                 if (!operations.contains(regularExpression[i+1])) {
                     i = noOperationRegularSymbol(i);
                 }else{
-                    i = noOperationRegularSymbol(i,
-                            startVertex,
-                            intermediateEndVertex);
+                    if (i < regularExpression.length-1
+                            && regularExpression[i+1].equals("*")){
+                        i = noOperationRegularSymbol(i, startVertex, startVertex);
+                    }else{
+                        if (!isStarSymbol) {
+                            i = noOperationRegularSymbol(i, startVertex,
+                                    intermediateEndVertex);
+                        }else{
+                            i = noOperationRegularSymbol(i, startVertex,
+                                    intermediateStartVertex);
+                        }
+                    }
                 }
             }else if(regularExpression[i].equals("(")){
-                i = bracketRegularSymbol(i, end, startVertex, intermediateEndVertex);
+                if (!isStarSymbol) {
+                    i = bracketRegularSymbol(i, end, startVertex, intermediateEndVertex);
+                }else{
+                    i = bracketRegularSymbol(i, end, startVertex, intermediateStartVertex);
+                }
+
 //                intermediateEndVertex = endVertex;
             }else if(regularExpression[i].equals("+")){
-                i = plusRegularSymbol(i, end,intermediateStartVertex,
-                        intermediateEndVertex);
+                if (!isStarSymbol) {
+                    i = plusRegularSymbol(i, end, intermediateStartVertex,
+                            intermediateEndVertex);
+                }else{
+                    i = plusRegularSymbol(i, end, intermediateStartVertex,
+                            intermediateStartVertex);
+                }
             }else{
                 i++;
             }
@@ -115,11 +143,33 @@ public class AutomateCreatorFromRegulars {
         while (i <= end){
             if (!operations.contains(regularExpression[i])) {
                 if (i != end) {
-                    i = noOperationRegularSymbol(i);
+                    if (i < regularExpression.length-1
+                            && regularExpression[i+1].equals("*")){
+                        i = noOperationRegularSymbol(i, startVertex, startVertex);
+                        if (i == end){
+                            i--;
+                            i = noOperationRegularSymbol(i,
+                                    startVertex,
+                                    intermediateEndVertex);
+                        }else{
+                            i--;
+                            i = noOperationRegularSymbol(i);
+                        }
+                    }else {
+                        i = noOperationRegularSymbol(i);
+                    }
+
                 }else {
+                    if (i < regularExpression.length-1
+                            && regularExpression[i+1].equals("*")) {
+                        i = noOperationRegularSymbol(i, startVertex, startVertex);
+                        i--;
+                    }
+
                     i = noOperationRegularSymbol(i,
-                            startVertex,
-                            intermediateEndVertex);
+                                startVertex,
+                                intermediateEndVertex);
+
                 }
             }else if(regularExpression[i].equals("(")){
                 i = bracketRegularSymbol(i, end, intermediateStartVertex, intermediateEndVertex);
