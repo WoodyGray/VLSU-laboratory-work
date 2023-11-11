@@ -6,17 +6,29 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 //1-2 lab
 
 public class DfaNfaAnalyse {
-    private static HashMap<String, HashMap<String, String>> matrix;
-    private static HashMap<String, HashMap<String, String[]>> dMatrix;
+    private static Map<String, Map<String, String>> matrix;
+    private static Map<String, Map<String, String[]>> dMatrix;
     private static String[] queue;
     private static String strStatus;
     private static String finish;
     public static void main(String[] args) {
-        initDMatrix("matrix.csv");
+//        initDMatrix("matrix.csv");
+//        initQueue("queue.txt");
+//        if (validationOfValidity()){
+//            System.out.println("the queue is valid");
+//        }else {
+//            System.out.println("the queue is not valid");
+//        }
+
+        matrix = null;
+        AutomateCreatorFromRegulars.main(args);
+        dMatrix = AutomateCreatorFromRegulars.getdMatrix();
+        strStatus = "a";
         initQueue("queue.txt");
         if (validationOfValidity()){
             System.out.println("the queue is valid");
