@@ -19,6 +19,9 @@ public class MultilevelEncryption {
     private int[] substitutionKey;
     private int[] gummingKey;
 
+    private byte[] previousEncodeBlock;
+    private byte[] nowEncodeBlock;
+
     public MultilevelEncryption(CntOfRounds strategy){
         this.strategy = strategy;
     }
@@ -44,8 +47,16 @@ public class MultilevelEncryption {
                 whatCodeFile.read(bufferRead, 0, bufferSize);
 
                 for (int i = blockSize - 1; i < bufferSize; i+=blockSize) {
-                    block = choseEncodeMethod(
-                            Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
+                    if (previousEncodeBlock == null){
+                        block = choseEncodeMethod(
+                                Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
+                        previousEncodeBlock = block;
+                    }else{
+                        block = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = xorBlocks(block, previousEncodeBlock);
+                        block = choseEncodeMethod(block);
+                        previousEncodeBlock = block;
+                    }
                     System.arraycopy(block, 0, bufferWrite, i-blockSize+1, blockSize);
                 }
 
@@ -78,6 +89,7 @@ public class MultilevelEncryption {
     }
 
     public void decode(String whatDecodeFileName, String toDecodeFileName){
+        previousEncodeBlock = null;
 
         try(FileInputStream whatDecodeFile = new FileInputStream(whatDecodeFileName);
             FileOutputStream toDecodeFile = new FileOutputStream(toDecodeFileName)){
@@ -97,8 +109,16 @@ public class MultilevelEncryption {
                 whatDecodeFile.read(bufferRead, 0, bufferSize);
 
                 for (int i = blockSize - 1; i < bufferSize; i+=blockSize) {
-                    block = choseDecodeMethod(
-                            Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
+                    if (previousEncodeBlock == null){
+                        previousEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = choseDecodeMethod(
+                                previousEncodeBlock);
+                    }else{
+                        nowEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = choseDecodeMethod(nowEncodeBlock);
+                        block = xorBlocks(block, previousEncodeBlock);
+                        previousEncodeBlock = nowEncodeBlock;
+                    }
                     System.arraycopy(block, 0, bufferWrite, i-blockSize+1, blockSize);
                 }
                 if (!flag) {
@@ -135,6 +155,15 @@ public class MultilevelEncryption {
                 break;
         }
         return resultBlock;
+    }
+
+    private byte[] xorBlocks(byte[] firstBlock, byte[] secondBlock){
+        byte[] result = new byte[firstBlock.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (byte) (firstBlock[i] ^ secondBlock[i]);
+        }
+
+        return result;
     }
 
     private byte[] encodeFiveRndPe(byte[] block){

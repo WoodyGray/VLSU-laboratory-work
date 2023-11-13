@@ -9,6 +9,7 @@ import java.util.*;
 
 public class AutomateCreatorFromRegulars {
     private static Map<String, Map<String, String>> nfaMatrix;
+    private static Map<String, Map<String, String[]>> dMatrix;
     private static String[] regularExpression;
     private static final List<String> operations = new ArrayList<>(Arrays.asList("(", ")", "*", "+"));
 
@@ -20,6 +21,7 @@ public class AutomateCreatorFromRegulars {
         initRegulars("regularExpression.txt");
 
         createAutomate();
+        convertToDMatrix();
         System.out.println(1);
     }
 
@@ -34,6 +36,21 @@ public class AutomateCreatorFromRegulars {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void convertToDMatrix(){
+        dMatrix = new HashMap<>();
+        for (String v:nfaMatrix.keySet()
+             ) {
+            for (String vv:nfaMatrix.get(v).keySet()
+                 ) {
+                if (!dMatrix.containsKey(vv)){
+                    dMatrix.put(vv, new HashMap<>());
+                }
+                dMatrix.get(vv).put(v,
+                        nfaMatrix.get(v).get(vv).split(";"));
+            }
         }
     }
 
@@ -214,4 +231,7 @@ public class AutomateCreatorFromRegulars {
         return i;
     }
 
+    public static Map<String, Map<String, String[]>> getdMatrix() {
+        return dMatrix;
+    }
 }
