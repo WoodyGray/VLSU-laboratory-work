@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
+//5 lab
+
 public class AutomateCreatorFromRegulars {
     private static Map<String, Map<String, String>> nfaMatrix;
     private static Map<String, Map<String, String[]>> dMatrix;
