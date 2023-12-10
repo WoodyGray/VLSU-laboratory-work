@@ -9,9 +9,9 @@ import java.util.*;
 public class SfaAnalyse {
     private static Map<String, Set<Rule>> automate;
     private static Stack<String> stack;
+    private static Stack<String> vertexWay;
     private static String[] queue;
     private static Set<String> endVertexes;
-    private static String startVertex;
 
     private static class Rule {
         public String whatCame;
@@ -50,8 +50,21 @@ public class SfaAnalyse {
         }else {
             System.out.println("the queue is not valid");
         }
+//        Stack<String> test = new Stack<>();
+//        test.add("bb");
+//        test1(test);
 
     }
+
+//    private static void test1(Stack<String> a){
+//        a.forEach(System.out::println);
+//        test2(a);
+//        a.forEach(System.out::println);
+//    }
+//    private static void test2(Stack<String> a){
+//        a = (Stack<String>) a.clone();
+//        a.add("aaa");
+//    }
 
     private static void initSfa(String fileName){
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
@@ -81,8 +94,12 @@ public class SfaAnalyse {
 
     private static void initQueue(String fileName){
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
-            startVertex = reader.readLine();
-            queue = reader.readLine().split(" ");
+            vertexWay = new Stack<>();
+            vertexWay.add(reader.readLine());
+//            startVertex = reader.readLine();
+            String line = reader.readLine().replaceAll(" ", "e");
+            line = "e" + line + "e";
+            queue = line.split("");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -105,49 +122,32 @@ public class SfaAnalyse {
         if (automate != null && queue != null){
             stack = new Stack<>();
             stack.push("z0");
-            Set<Rule> rules;
             Set<Rule> simplyRules;
-            Stack<String> copyStack;
-            boolean queIsNotValid;
             for (int i = 0; i < queue.length; i++) {
-                if (automate.containsKey(startVertex)){
-                    queIsNotValid = true;
-                    rules = automate.get(startVertex);
-                    for (Rule rule: rules) {
-                        if (queue[i].equals(rule.whatCame)
-                                && stack.peek().equals(rule.whatLies)){
-                            simplyRules = getSimilarRules(
-                                    startVertex,
-                                    rule.whatCame,
-                                    rule.whatLies
-                            );
-                            if (simplyRules != null && simplyRules.size()>1){
-                                copyStack = stack;
-                                for (Rule r: simplyRules
-                                     ) {
-                                    if (recursiveValidation(i, r)){
-                                        return true;
-                                    }
-                                }
-                                stack = copyStack;
-                            }else {
-                                startVertex = changeStack(stack, rule);
+                if (!queue[i].equals("e")
+                        && automate.containsKey(vertexWay.peek())){
+                    simplyRules = getSimilarRules(
+                            vertexWay.peek(),
+                            queue[i],
+                            stack.peek()
+                    );
+                    if (!simplyRules.isEmpty()){
+                        for (Rule rule: simplyRules
+                             ) {
+                            if (recursiveValidation(
+                                    i,
+                                    stack,
+                                    vertexWay,
+                                    rule
+                            )){
+                                return true;
                             }
-                            queIsNotValid = false;
-                            break;
                         }
+                        break;
                     }
-                    if (queIsNotValid)
-                        return false;
-                }else{
-                    return false;
                 }
             }
-            if (stack.peek().equals("z0") || endVertexes.contains(startVertex)) {
-                return true;
-            }else{
-                return false;
-            }
+            return false;
         }else {
             return false;
         }
@@ -170,51 +170,109 @@ public class SfaAnalyse {
     }
 
     private static boolean recursiveValidation(
-            Integer position, Rule startRule){
-        String copyVertex = changeStack(stack, startRule);
-        Stack<String> copyStack = stack;
+            Integer position
+            ,Stack<String> stack
+            ,Stack<String> vertexWay
+            ,Rule rule
+    ){
         Set<Rule> rules;
         Set<Rule> simplyRules;
-        boolean queIsNotValid;
+        stack = (Stack<String>) stack.clone();
+        vertexWay = (Stack<String>) vertexWay.clone();
+
+        vertexWay.add(changeStack(stack, rule));
+        position++;
+
         for (int i = position; i < queue.length; i++) {
-            if (automate.containsKey(copyVertex)){
-                queIsNotValid = true;
-                rules = automate.get(copyVertex);
-                for (Rule rule: rules) {
-                    if (queue[i].equals(rule.whatCame)
-                            && copyStack.peek().equals(rule.whatLies)){
-                        simplyRules = getSimilarRules(
-                                copyVertex,
-                                rule.whatCame,
-                                rule.whatLies
-                        );
-                        if (simplyRules != null && simplyRules.size()>1){
-                            stack = copyStack;
-                            for (Rule r: simplyRules
-                            ) {
-                                if (recursiveValidation(i, r)){
-                                    return true;
+            if (!queue[i].equals("e")){
+                if (automate.containsKey(vertexWay.peek())){
+                    rules = automate.get(vertexWay.peek());
+                    for (Rule r: rules
+                         ) {
+                        if (queue[i].equals(r.whatCame)
+                                && stack.peek().equals(r.whatLies)){
+                            simplyRules = getSimilarRules(
+                                    vertexWay.peek(),
+                                    r.whatCame,
+                                    r.whatLies
+                            );
+                            if (!simplyRules.isEmpty()){
+                                for (Rule rr: simplyRules
+                                     ) {
+                                    if (recursiveValidation(
+                                            i,
+                                            stack,
+                                            vertexWay,
+                                            rr
+                                    )){
+                                        return true;
+                                    }
                                 }
+                                break;
                             }
-                            copyStack = stack;
-                        }else {
-                            startVertex = changeStack(copyStack, rule);
                         }
-                        queIsNotValid = false;
-                        break;
                     }
-                }
-                if (queIsNotValid)
+                }else {
                     return false;
-            }else{
+                }
                 return false;
             }
         }
-        if (copyStack.peek().equals("z0") || endVertexes.contains(copyVertex)) {
+        if (stack.peek().equals("z0")||endVertexes.contains(vertexWay.peek())){
+            System.out.println("true way:");
+            vertexWay.forEach(System.out::print);
+            System.out.println();
             return true;
-        }else{
+        }else {
+            System.out.println("false way:");
+            vertexWay.forEach(System.out::print);
+            System.out.println();
             return false;
         }
+//        String copyVertex = changeStack(stack, startRule);
+//        Stack<String> copyStack = stack;
+//        Set<Rule> rules;
+//        Set<Rule> simplyRules;
+//        boolean queIsNotValid;
+//        for (int i = position; i < queue.length; i++) {
+//            if (automate.containsKey(copyVertex)){
+//                queIsNotValid = true;
+//                rules = automate.get(copyVertex);
+//                for (Rule rule: rules) {
+//                    if (queue[i].equals(rule.whatCame)
+//                            && copyStack.peek().equals(rule.whatLies)){
+//                        simplyRules = getSimilarRules(
+//                                copyVertex,
+//                                rule.whatCame,
+//                                rule.whatLies
+//                        );
+//                        if (simplyRules != null && simplyRules.size()>1){
+//                            stack = copyStack;
+//                            for (Rule r: simplyRules
+//                            ) {
+//                                if (recursiveValidation(i, r)){
+//                                    return true;
+//                                }
+//                            }
+//                            copyStack = stack;
+//                        }else {
+//                            startVertex = changeStack(copyStack, rule);
+//                        }
+//                        queIsNotValid = false;
+//                        break;
+//                    }
+//                }
+//                if (queIsNotValid)
+//                    return false;
+//            }else{
+//                return false;
+//            }
+//        }
+//        if (copyStack.peek().equals("z0") || endVertexes.contains(copyVertex)) {
+//            return true;
+//        }else{
+//            return false;
+//        }
     }
 
     private static String changeStack(Stack<String> stack, Rule rule){
