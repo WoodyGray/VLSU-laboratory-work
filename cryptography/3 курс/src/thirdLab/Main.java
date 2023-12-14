@@ -5,6 +5,6 @@ public class Main {
         MultilevelEncryption encryption =
                 new MultilevelEncryption(CntOfRounds.NINE_SU);
         encryption.encode("firstFile.txt", "secondFile.txt");
-//        encryption.decode("second.exe", "third.exe");
+        encryption.decode("second.exe", "third.exe");
     }
 }

@@ -1,28 +1,19 @@
-package test;
+package com.woody.lab;
 
 import org.ini4j.Ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.StringJoiner;
 
 
 public class Main {
     private static HashMap<String, HashMap<String, String>> matrix;
     private static String[] symbols;
     public static void main(String[] args) throws IOException {
-        /*BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Woody\\Desktop\\1).txt"));
-        BufferedWriter writer = new BufferedWriter(new FileWriter("matrix.txt"));
-        String line;
-        while (reader.ready()){
-            line=reader.readLine();
-            line = line.replaceAll("\t", ";");
-            line = line.replaceAll(" ", ";");
-            System.out.println(line.charAt(0) == '\t');
-            writer.write(line+"\n");
-            writer.flush();
-        }
-        writer.close();
-        reader.close();*/
 
         matrix = new HashMap<>();
         BufferedReader reader = new BufferedReader(new FileReader("matrix.txt"));
