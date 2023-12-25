@@ -47,18 +47,18 @@ public class MultilevelEncryption {
                 whatCodeFile.read(bufferRead, 0, bufferSize);
 
                 for (int i = blockSize - 1; i < bufferSize; i+=blockSize) {
-                    block = choseEncodeMethod(
-                                Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
-//                    if (previousEncodeBlock == null){
-//                        block = choseEncodeMethod(
+//                    block = choseEncodeMethod(
 //                                Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
-//                        previousEncodeBlock = block;
-//                    }else{
-//                        block = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
-//                        block = xorBlocks(block, previousEncodeBlock);
-//                        block = choseEncodeMethod(block);
-//                        previousEncodeBlock = block;
-//                    }
+                    if (previousEncodeBlock == null){
+                        block = choseEncodeMethod(
+                                Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
+                        previousEncodeBlock = block;
+                    }else{
+                        block = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = xorBlocks(block, previousEncodeBlock);
+                        block = choseEncodeMethod(block);
+                        previousEncodeBlock = block;
+                    }
                     System.arraycopy(block, 0, bufferWrite, i-blockSize+1, blockSize);
                 }
 
@@ -111,18 +111,18 @@ public class MultilevelEncryption {
                 whatDecodeFile.read(bufferRead, 0, bufferSize);
 
                 for (int i = blockSize - 1; i < bufferSize; i+=blockSize) {
-                    block = choseDecodeMethod(
-                            Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
-//                    if (previousEncodeBlock == null){
-//                        previousEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
-//                        block = choseDecodeMethod(
-//                                previousEncodeBlock);
-//                    }else{
-//                        nowEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
-//                        block = choseDecodeMethod(nowEncodeBlock);
-//                        block = xorBlocks(block, previousEncodeBlock);
-//                        previousEncodeBlock = nowEncodeBlock;
-//                    }
+//                    block = choseDecodeMethod(
+//                            Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1));
+                    if (previousEncodeBlock == null){
+                        previousEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = choseDecodeMethod(
+                                previousEncodeBlock);
+                    }else{
+                        nowEncodeBlock = Arrays.copyOfRange(bufferRead, i-blockSize+1, i+1);
+                        block = choseDecodeMethod(nowEncodeBlock);
+                        block = xorBlocks(block, previousEncodeBlock);
+                        previousEncodeBlock = nowEncodeBlock;
+                    }
                     System.arraycopy(block, 0, bufferWrite, i-blockSize+1, blockSize);
                 }
                 if (!flag) {
